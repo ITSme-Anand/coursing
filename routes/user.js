@@ -8,7 +8,7 @@ userRouter.post("/signin", async function (req, res) {
 
 })
 
-userRouter.post("/courses", async function (req, res) {
+userRouter.get("/courses", async function (req, res) {
 
 })
 module.exports = {
