@@ -1,7 +1,7 @@
 const { Router } = require("express")
 const userRouter = Router();
 const { userAuth } = require("./../auth.js")
-const { userModel } = require("../db.js")
+const { userModel, purchaseModel, courseModel } = require("../db.js")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 require("dotenv").config()
@@ -73,7 +73,43 @@ userRouter.post("/signin", async function (req, res) {
 })
 
 userRouter.get("/courses", userAuth, async function (req, res) {
-
+  const userId = req.id;
+  let result;
+  try {
+    result = await purchaseModel.find({
+      userId: userId,
+    })
+  }
+  catch (err) {
+    console.error(err);
+    res.json({
+      "message": "couldn't get user's purchases",
+      "error": err
+    })
+    return;
+  }
+  let courses = [];
+  try {
+    result.forEach(async function (purchase) {
+      let courseId = purchase.courseId;
+      let course = await courseModel.findOne({
+        _id: courseId,
+      })
+      courses.push(course);
+    });
+  }
+  catch (err) {
+    console.error(err);
+    res.json({
+      "message": "couldn't get my courses",
+      "error": err,
+    })
+    return;
+  }
+  res.json({
+    "message": "acquired my courses",
+    "courses": courses,
+  })
 })
 module.exports = {
   userRouter: userRouter

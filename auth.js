@@ -38,7 +38,7 @@ async function adminAuth(req, res, next) {
   }
   if (decodedData.id) {
     console.log("authenticated Admin");
-    req.userId = id;
+    req.adminId = id;
     next();
   }
   else {
