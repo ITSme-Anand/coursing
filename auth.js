@@ -4,8 +4,9 @@ const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 async function userAuth(req, res, next) {
   const token = req.headers.token;
+  let decodedData;
   try {
-    const decodedData = await jwt.verify(token, USER_JWT_SECRET);
+    decodedData = await jwt.verify(token, USER_JWT_SECRET);
   } catch (err) {
     console.log(err);
     res.json({
@@ -15,7 +16,7 @@ async function userAuth(req, res, next) {
   }
   if (decodedData.id) {
     console.log("authenticated User");
-    req.userId = id;
+    req.userId = decodedData.id;
     next();
   }
   else {
@@ -27,8 +28,9 @@ async function userAuth(req, res, next) {
 }
 async function adminAuth(req, res, next) {
   const token = req.headers.token;
+  let decodedData;
   try {
-    const decodedData = await jwt.verify(token, ADMIN_JWT_SECRET);
+    decodedData = await jwt.verify(token, ADMIN_JWT_SECRET);
   } catch (err) {
     console.log(err);
     res.json({
@@ -36,9 +38,10 @@ async function adminAuth(req, res, next) {
     });
     return;
   }
+  console.log(decodedData);
   if (decodedData.id) {
     console.log("authenticated Admin");
-    req.adminId = id;
+    req.adminId = decodedData.id;
     next();
   }
   else {

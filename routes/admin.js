@@ -13,7 +13,7 @@ adminRouter.post("/signup", async function (req, res) {
   //input validation has to be donee
   const hashedPassword = await bcrypt.hash(password, 5);
   try {
-    await userModel.create({
+    await adminModel.create({
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -132,9 +132,10 @@ adminRouter.get("/course/bulk", adminAuth, async function (req, res) {
   let result;
   try {
 
-    result = courseModel.find({
+    result = await courseModel.find({
       creatorId: adminId,
     })
+    console.log("result obtained");
   } catch (err) {
     console.error(err);
     res.json({
@@ -143,6 +144,9 @@ adminRouter.get("/course/bulk", adminAuth, async function (req, res) {
     })
     return;
   }
+  courses = [];
+  console.log(typeof result)
+  await result.forEach(doc => courses.push(doc));
   res.json({
     "message": "courses obtained successfully",
     "courses": result,
