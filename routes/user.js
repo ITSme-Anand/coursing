@@ -73,7 +73,7 @@ userRouter.post("/signin", async function (req, res) {
 })
 
 userRouter.get("/courses", userAuth, async function (req, res) {
-  const userId = req.id;
+  const userId = req.userId;
   let result;
   try {
     result = await purchaseModel.find({
@@ -88,15 +88,13 @@ userRouter.get("/courses", userAuth, async function (req, res) {
     })
     return;
   }
-  let courses = [];
+  let courses;
   try {
-    result.forEach(async function (purchase) {
-      let courseId = purchase.courseId;
-      let course = await courseModel.findOne({
-        _id: courseId,
-      })
-      courses.push(course);
-    });
+    console.log(result)
+    courses = await courseModel.find({
+      _id: { $in: result.map(x => x.courseId) }
+    })
+    console.log(courses)
   }
   catch (err) {
     console.error(err);
